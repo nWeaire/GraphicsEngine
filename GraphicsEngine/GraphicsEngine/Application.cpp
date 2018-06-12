@@ -22,7 +22,7 @@ int Application::Initialize(const glm::ivec2 & a_resolution, const char * a_name
 	if (glfwInit() == false)
 		return -1; // -1 is a failure code 
 
-    //Make a window with openGL render   Width, Height, Window name, Screen pointer
+    //Make a window with openGL render Width, Height, Window name, Screen pointer
 	window = glfwCreateWindow(a_resolution.x,a_resolution.y, a_name, nullptr, nullptr);
 
 	//Check window worked
@@ -91,6 +91,13 @@ int Application::Initialize(const glm::ivec2 & a_resolution, const char * a_name
 		return false;
 	}
 
+	m_postShader.loadShader(aie::eShaderStage::VERTEX, "../Shaders/post.vert");
+	m_postShader.loadShader(aie::eShaderStage::FRAGMENT, "../Shaders/post.frag");
+	if (m_postShader.link() == false) {
+		printf("Post Shader Error: %s\n",
+			m_postShader.getLastError());
+		return false;
+	}
 
 	m_light.diffuse = { 1, 1, 1 };
 	m_light.specular = { 0, 1, 0 };
@@ -154,22 +161,23 @@ int Application::Initialize(const glm::ivec2 & a_resolution, const char * a_name
 		0,0,0.1f,0,
 		0,0,-10,1
 	};
-//	if (m_renderTarget.initialise(1, getWindowWidth(), getWindowHeight()) == false) {
-//		printf("Render Target Error!\n");
-//		return false;
-//}
+
+	if (m_renderTarget.initialise(1, a_resolution.x, a_resolution.y) == false) {
+		printf("Render Target Error!\n");
+		return false;
+}
 	// create a fullscreen quad
 	m_fullscreenQuad.initialiseFullscreenQuad();
-	// load a post-processing shader
-	m_postShader.loadShader(aie::eShaderStage::VERTEX,
-		"./shaders/post.vert");
-	m_postShader.loadShader(aie::eShaderStage::FRAGMENT,
-		"./shaders/post.frag");
-	if (m_postShader.link() == false) {
-		printf("Post Shader Error: %s\n",
-			m_postShader.getLastError());
-		return false;
-	}
+
+	m_quadMesh.initialiseQuad();
+
+	//Make the quad 10 units wide
+	m_quadTransform = 
+	{ 10, 0, 0, 0,
+		0, 10, 0, 0,
+		0, 0, 10, 0,
+		0, 0, 0, 1 }; 
+
 
 	aie::Texture texture2;
 	unsigned char texelData[4] = { 0, 255, 255, 0 };
@@ -220,62 +228,74 @@ void Application::Render()
 
 	// update perspective in case window resized
 	cam->setPerspective(0.25f, 16 / 9.f, 0.1f, 1000.f);
-
+	m_renderTarget.bind();
+	
 	// bind shader
 	//shader.bind();
 	m_normalMapShader.bind();
 
-	// bind transform
+	//// bind transform
 	auto pvm = cam->getProjectionView() * m_houseTransform;
 
-	m_normalMapShader.bindUniform("ProjectionViewModel", pvm);
-	// bind transforms for lighting
-	m_normalMapShader.bindUniform("NormalMatrix",
-		glm::inverseTranspose(glm::mat3(m_houseTransform)));
-	m_normalMapShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(m_viewMatrix)[3]));
-	m_normalMapShader.bindUniform("Ia", m_ambientLight);
-	m_normalMapShader.bindUniform("Id", m_light.diffuse);
-	m_normalMapShader.bindUniform("Is", m_light.specular);
-	m_normalMapShader.bindUniform("lightDirection", m_light.direction);
+	//m_normalMapShader.bindUniform("ProjectionViewModel", pvm);
+	//// bind transforms for lighting
+	//m_normalMapShader.bindUniform("NormalMatrix",
+	//	glm::inverseTranspose(glm::mat3(m_houseTransform)));
+	//m_normalMapShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(m_viewMatrix)[3]));
+	//m_normalMapShader.bindUniform("Ia", m_ambientLight);
+	//m_normalMapShader.bindUniform("Id", m_light.diffuse);
+	//m_normalMapShader.bindUniform("Is", m_light.specular);
+	//m_normalMapShader.bindUniform("lightDirection", m_light.direction);
 
-	// draw house
-	m_houseMesh.draw();
+	//// draw house
+	//m_houseMesh.draw();
 
 	pvm = cam->getProjectionView() * m_spearTransform;
 
 	m_normalMapShader.bindUniform("ProjectionViewModel", pvm);
 	// bind transforms for lighting
-	m_normalMapShader.bindUniform("NormalMatrix",
-		glm::inverseTranspose(glm::mat3(m_spearTransform)));
+	m_normalMapShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_spearTransform)));
 	m_normalMapShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(m_viewMatrix)[3]));
 	m_normalMapShader.bindUniform("Ia", m_ambientLight);
 	m_normalMapShader.bindUniform("Id", m_light2.diffuse);
 	m_normalMapShader.bindUniform("Is", m_light2.specular);
 	m_normalMapShader.bindUniform("lightDirection", m_light2.direction);
 
-	// draw spear
-	m_spearMesh.draw();
-
-	pvm = cam->getProjectionView() * m_rockTransform;
-
-	m_normalMapShader.bindUniform("ProjectionViewModel", pvm);
-	// bind transforms for lighting
-	m_normalMapShader.bindUniform("NormalMatrix",
-		glm::inverseTranspose(glm::mat3(m_rockTransform)));
-	m_normalMapShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(m_viewMatrix)[3]));
-	m_normalMapShader.bindUniform("Ia", m_ambientLight);
-	m_normalMapShader.bindUniform("Id", m_light3.diffuse);
-	m_normalMapShader.bindUniform("Is", m_light3.specular);
-	m_normalMapShader.bindUniform("lightDirection", m_light3.direction);
+	m_renderTarget.unbind();
 
 	// draw spear
-	m_rockMesh.draw();
+	//m_spearMesh.draw();
 
+	// bind texturing shader
 	m_texturedShader.bind();
-	pvm = cam->getProjectionView() * m_spearTransform2;
+	pvm = cam->getProjectionView() * m_quadTransform;
 	m_texturedShader.bindUniform("ProjectionViewModel", pvm);
-	
-	m_spearMesh2.draw();
+	m_texturedShader.bindUniform("diffuseTexture", 0);
+	m_renderTarget.getTarget(0).bind(0);
+
+	// draw quad
+	m_quadMesh.draw();
+
+	//pvm = cam->getProjectionView() * m_rockTransform;
+
+	//m_normalMapShader.bindUniform("ProjectionViewModel", pvm);
+	//// bind transforms for lighting
+	//m_normalMapShader.bindUniform("NormalMatrix",
+	//	glm::inverseTranspose(glm::mat3(m_rockTransform)));
+	//m_normalMapShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(m_viewMatrix)[3]));
+	//m_normalMapShader.bindUniform("Ia", m_ambientLight);
+	//m_normalMapShader.bindUniform("Id", m_light3.diffuse);
+	//m_normalMapShader.bindUniform("Is", m_light3.specular);
+	//m_normalMapShader.bindUniform("lightDirection", m_light3.direction);
+
+	//// draw spear
+	//m_rockMesh.draw();
+
+	//m_texturedShader.bind();
+	//pvm = cam->getProjectionView() * m_spearTransform2;
+	//m_texturedShader.bindUniform("ProjectionViewModel", pvm);
+	//
+	//m_spearMesh2.draw();
 
 
 	// draw 3D gizmos

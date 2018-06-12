@@ -1,6 +1,6 @@
 #pragma once
 #include "glm.hpp"
-#include "../Dep/glCore/gl_core_4_5.h"
+#include "gl_core_4_5.h"
 class Mesh
 {
 public:

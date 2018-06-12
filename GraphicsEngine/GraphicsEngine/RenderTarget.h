@@ -3,37 +3,36 @@
 #include "Texture.h"
 
 namespace aie {
-	
-class RenderTarget {
-public:
 
-	RenderTarget();
-	RenderTarget(unsigned int targetCount, unsigned int width, unsigned int height);
-	virtual ~RenderTarget();
+	class RenderTarget {
+	public:
 
-	bool initialise(unsigned int targetCount, unsigned int width, unsigned int height);
+		RenderTarget();
+		RenderTarget(unsigned int targetCount, unsigned int width, unsigned int height);
+		virtual ~RenderTarget();
 
-	void bind();
-	void unbind();
+		bool initialise(unsigned int targetCount, unsigned int width, unsigned int height);
 
-	unsigned int	getWidth() const { return m_width; }
-	unsigned int	getHeight() const { return m_height; }
+		void bind();
+		void unbind();
 
-	unsigned int	getFrameBufferHandle() const { return m_fbo; }
+		unsigned int	getWidth() const { return m_width; }
+		unsigned int	getHeight() const { return m_height; }
 
-	unsigned int	getTargetCount() const { return m_targetCount; }
-	const Texture&	getTarget(unsigned int target) const { return m_targets[target]; }
+		unsigned int	getFrameBufferHandle() const { return m_fbo; }
 
-protected:
+		unsigned int	getTargetCount() const { return m_targetCount; }
+		const aie::Texture&	getTarget(unsigned int target) const { return m_targets[target]; }
 
-	unsigned int	m_width;
-	unsigned int	m_height;
+	protected:
 
-	unsigned int	m_fbo;
-	unsigned int	m_rbo;
+		unsigned int	m_width;
+		unsigned int	m_height;
 
-	unsigned int	m_targetCount;
-	Texture*		m_targets;
-};
+		unsigned int	m_fbo;
+		unsigned int	m_rbo;
 
-} // namespace aie
+		unsigned int	m_targetCount;
+		aie::Texture*		m_targets;
+	};
+}

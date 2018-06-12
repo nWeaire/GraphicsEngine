@@ -3,7 +3,7 @@
 #include <chrono>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
-#include "../Dep/glCore/gl_core_4_5.h"
+#include "gl_core_4_5.h"
 #include <glfw3.h>
 #include "Gizmos.h"
 #include "Camera.h"
@@ -85,6 +85,8 @@ protected:
 	glm::mat4			m_spearTransform2;
 
 	aie::Texture		m_gridTexture;
+
+	aie::RenderTarget		m_renderTarget;
 
 	struct Light {
 		glm::vec3 direction;

@@ -1,5 +1,5 @@
 #include "RenderTarget.h"
-#include "../Dep/glCore/gl_core_4_5.h"
+#include "gl_core_4_5.h"
 #include <vector>
 
 namespace aie {
