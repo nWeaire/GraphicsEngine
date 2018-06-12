@@ -1,0 +1,17 @@
+﻿  context.c
+  egl_context.c
+  init.c
+  input.c
+  monitor.c
+  vulkan.c
+  wgl_context.c
+  win32_init.c
+  win32_joystick.c
+  win32_monitor.c
+  win32_time.c
+  win32_tls.c
+  win32_window.c
+  window.c
+  xkb_unicode.c
+  Generating Code...
+  glfw3.vcxproj -> C:\Users\s171762\Desktop\Graphics - Nicholas Weaire\Graphics\GraphicsEngine\x64\Debug\glfw3.lib

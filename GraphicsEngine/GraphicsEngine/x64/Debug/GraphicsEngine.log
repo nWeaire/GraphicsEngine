@@ -1,0 +1,16 @@
+﻿  Application.cpp
+g:\uni\graphics - nicholas weaire\graphics\graphicsengine\graphicsengine\application.cpp(188): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+g:\uni\graphics - nicholas weaire\graphics\graphicsengine\graphicsengine\application.cpp(197): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Camera.cpp
+  FlyCamera.cpp
+  Gizmos.cpp
+  Main.cpp
+  Mesh.cpp
+  OBJMesh.cpp
+  Planet.cpp
+  RenderTarget.cpp
+  Shader.cpp
+  Texture.cpp
+  Generating Code...
+  gl_core_4_5.c
+  GraphicsEngine.vcxproj -> G:\Uni\Graphics - Nicholas Weaire\Graphics\GraphicsEngine\x64\Debug\GraphicsEngine.exe
