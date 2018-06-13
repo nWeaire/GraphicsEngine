@@ -84,6 +84,12 @@ protected:
 	aie::OBJMesh		m_spearMesh2;
 	glm::mat4			m_spearTransform2;
 
+	aie::OBJMesh		m_dummyMesh;
+	glm::mat4			m_dummyTransform;
+
+	aie::OBJMesh		m_cameraMesh;
+	glm::mat4			m_cameraTransform;
+
 	aie::Texture		m_gridTexture;
 
 	aie::RenderTarget		m_renderTarget;
@@ -96,6 +102,7 @@ protected:
 	Light m_light;
 	Light m_light2;
 	Light m_light3;
+	Light m_light4;
 	glm::vec3 m_ambientLight;
 
 };
