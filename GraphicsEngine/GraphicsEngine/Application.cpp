@@ -91,6 +91,15 @@ int Application::Initialize(const glm::ivec2 & a_resolution, const char * a_name
 		return false;
 	}
 
+	m_particleShader.loadShader(aie::eShaderStage::VERTEX,
+		"../shaders/particle.vert");
+	m_particleShader.loadShader(aie::eShaderStage::FRAGMENT,
+		"../shaders/particle.frag");
+	if (m_particleShader.link() == false) {
+		printf("Particle Error: %s\n", m_particleShader.getLastError());
+		return false;
+	}
+
 	m_light.diffuse = { 1, 1, 1 };
 	m_light.specular = { 0, 1, 0 };
 	m_ambientLight = { 0.25f, 0.25f, 0.25f };
@@ -195,19 +204,31 @@ int Application::Initialize(const glm::ivec2 & a_resolution, const char * a_name
 		10,15,0,1
 	};
 
-	if (m_renderTarget.initialise(1, a_resolution.x, a_resolution.y) == false) {
+	if (m_renderTarget.initialise(1, a_resolution.x, a_resolution.y) == false)
+	{
 		printf("Render Target Error!\n");
 		return false;
-}
+	}
 
 	m_quadMesh.initialiseQuad();
 
 	//Make the quad 10 units wide
 	m_quadTransform = 
-	{ 10, 0, 0, 0,
+	{ 
+		10, 0, 0, 0,
 		0, 10, 0, 0,
 		0, 0, 10, 0,
-		0, 0, 0, 1 }; 
+		0, 0, 0, 1 
+	}; 
+
+	m_emitter.initalise(1000, 500, 0.1f, 1.0f, 1, 5, 1, 0.1f, glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));
+	m_particleTransform = 
+	{
+		10, 0, 0, 0,
+		0, 10, 0, 0,
+		0, 0, 10, 0,
+		0, 0, 0, 1 
+	};
 
 	aie::Texture texture2;
 	unsigned char texelData[4] = { 0, 255, 255, 0 };
@@ -245,7 +266,7 @@ void Application::Run()
 			aie::Gizmos::addLine(glm::vec3(-10 + i, 0, 10), glm::vec3(-10 + i, 0, -10), i == 10 ? white : black);
 			aie::Gizmos::addLine(glm::vec3(10, 0, -10 + i), glm::vec3(-10, 0, -10 + i), i == 10 ? white : black);
 		}
-
+		m_emitter.update(glfwGetTime(), cam->getWorldTransform());
 		Render();
 		glfwPollEvents();
 	}
@@ -335,6 +356,13 @@ void Application::Render()
 	m_texturedShader.bindUniform("ProjectionViewModel", pvm);
 	
 	m_spearMesh2.draw();
+
+	// bind particle shader
+	m_particleShader.bind();
+	// bind particle transform
+	pvm = cam->getProjectionView() * m_particleTransform;
+	m_particleShader.bindUniform("ProjectionViewModel", pvm);
+	m_emitter.draw();
 
 	// draw 3D gizmos
 	aie::Gizmos::draw(cam->getProjectionView());

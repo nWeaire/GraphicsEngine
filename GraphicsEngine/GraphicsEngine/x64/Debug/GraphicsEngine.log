@@ -1,4 +1,7 @@
 ﻿  Application.cpp
-c:\users\s171762\desktop\graphicsengine\graphicsengine\graphicsengine\application.cpp(237): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\s171762\desktop\graphicsengine\graphicsengine\graphicsengine\application.cpp(246): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  GraphicsEngine.vcxproj -> C:\Users\s171762\Desktop\GraphicsEngine\GraphicsEngine\x64\Debug\GraphicsEngine.exe
+c:\users\nick\desktop\graphics\graphicsengine\graphicsengine\application.cpp(247): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\nick\desktop\graphics\graphicsengine\graphicsengine\application.cpp(256): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\nick\desktop\graphics\graphicsengine\graphicsengine\application.cpp(269): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Main.cpp
+  Generating Code...
+  GraphicsEngine.vcxproj -> C:\Users\Nick\Desktop\Graphics\GraphicsEngine\x64\Debug\GraphicsEngine.exe

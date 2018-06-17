@@ -12,7 +12,7 @@
 #include "Shader.h"
 #include "OBJMesh.h"
 #include "RenderTarget.h"
-
+#include "ParticleEmitter.h"
 namespace wsp
 {
 	using clock = std::chrono::high_resolution_clock;
@@ -63,6 +63,7 @@ protected:
 	aie::ShaderProgram	m_texturedShader;
 	aie::ShaderProgram	m_phongShader;
 	aie::ShaderProgram  m_postShader;
+	aie::ShaderProgram	m_particleShader;
 
 	Mesh				m_quadMesh;
 	glm::mat4			m_quadTransform;
@@ -93,6 +94,9 @@ protected:
 	aie::Texture		m_gridTexture;
 
 	aie::RenderTarget		m_renderTarget;
+
+	ParticleEmitter		m_emitter;
+	glm::mat4			m_particleTransform;
 
 	struct Light {
 		glm::vec3 direction;
