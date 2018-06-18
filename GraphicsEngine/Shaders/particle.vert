@@ -10,6 +10,6 @@ uniform mat4 ProjectionViewModel;
 
 void main() 
 {
-	Colour = Colour;
+	vColour = Colour;
 	gl_Position = ProjectionViewModel * Position;
 }

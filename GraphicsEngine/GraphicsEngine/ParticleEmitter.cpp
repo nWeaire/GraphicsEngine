@@ -40,7 +40,9 @@ void ParticleEmitter::initalise(unsigned int a_maxParticles, unsigned int a_emit
 	// create the array of vertices for the particles
 	// 4 vertices per particle for a quad.
 	// will be filled during update
-	m_vertexData = new ParticleVertex[m_maxParticles * 4];	// create the index buffeer data for the particles
+	m_vertexData = new ParticleVertex[m_maxParticles * 4];
+
+	// create the index buffeer data for the particles
 	// 6 indices per quad of 2 triangles
 	// fill it now as it never changes
 	unsigned int* indexData = new unsigned int[m_maxParticles * 6];
@@ -104,8 +106,8 @@ void ParticleEmitter::emit()
 	particle.velocity = glm::normalize(particle.velocity) * velocity;
 }
 
-void ParticleEmitter::update(float a_deltaTime,
-	const glm::mat4& a_cameraTransform) {
+void ParticleEmitter::update(float a_deltaTime, const glm::mat4& a_cameraTransform) 
+{
 	using glm::vec3;
 	using glm::vec4;
 	// spawn particles
@@ -176,4 +178,4 @@ void ParticleEmitter::draw()
 	// draw particles
 	glBindVertexArray(m_vao);
 	glDrawElements(GL_TRIANGLES, m_firstDead * 6, GL_UNSIGNED_INT, 0);
-}
+}

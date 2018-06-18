@@ -1,7 +1,5 @@
 #include "Application.h"
 
-
-
 Application::Application()
 {
 }
@@ -13,10 +11,10 @@ Application::~Application()
 
 int Application::Initialize(const glm::ivec2 & a_resolution, const char * a_name)
 {
-	cam = new FlyCamera();
-	m_startTime = m_clock.now();
-	m_currentTime = m_clock.now();
-	m_previousTime = m_clock.now();
+	m_cam = new FlyCamera();
+	m_startTime = m_clock.now(); // Start time of program
+	m_currentTime = m_clock.now(); // Current time of program
+	m_previousTime = m_clock.now(); // Previous time of program
 
 	// If we can hook into the GPU
 	if (glfwInit() == false)
@@ -33,9 +31,9 @@ int Application::Initialize(const glm::ivec2 & a_resolution, const char * a_name
 	}
 
 	int count = 0;
-	screens = glfwGetMonitors(&count);
+	screens = glfwGetMonitors(&count); // Gets number of monitors
 
-	glfwSetCursorPos(window, 720, 450);
+	glfwSetCursorPos(window, 720, 450); // Sets cursor position in screen space
 
 	//Bring to front
 	glfwMakeContextCurrent(window);
@@ -52,187 +50,177 @@ int Application::Initialize(const glm::ivec2 & a_resolution, const char * a_name
 	auto minor = ogl_GetMinorVersion();
 	printf("GL: %i.%i\n", major, minor);
 
-	glClearColor(0.25f, 0.25f, 0.25f, 1);
+	glClearColor(0.25f, 0.25f, 0.25f, 1); // Sets background colour
 
 	glEnable(GL_DEPTH_TEST);
 
 	//AIE Gizmos
-	aie::Gizmos::create(10000, 10000, 10000, 10000);
+	aie::Gizmos::create(10000, 10000, 10000, 10000); // Creates gizmos class with a max of 10000 lines and tris
 
-	cam->setLookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
-	//view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
-	cam->setPerspective(0.25f, 16 / 9.f, 0.1f, 1000.f);
-	//projection = glm::perspective(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.f);
+	m_cam->setLookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0)); // Sets cameras position, what to look at and from which rotation
+	m_cam->setPerspective(0.25f, 16 / 9.f, 0.1f, 1000.f); // Sets perspective of camera
 
-	m_texturedShader.loadShader(aie::eShaderStage::VERTEX,
-		"../shaders/textured.vert");
-	m_texturedShader.loadShader(aie::eShaderStage::FRAGMENT,
-		"../shaders/textured.frag");
-	if (m_texturedShader.link() == false) {
-		printf("Shader Error: %s\n", m_shader.getLastError());
-		return false;
-	}
-
-	m_normalMapShader.loadShader(aie::eShaderStage::VERTEX,
-		"../shaders/normalmap.vert");
-	m_normalMapShader.loadShader(aie::eShaderStage::FRAGMENT,
-		"../shaders/normalmap.frag");
-	if (m_normalMapShader.link() == false) {
-		printf("Shader Error: %s\n", m_shader.getLastError());
-		return false;
-	}
-
-	m_phongShader.loadShader(aie::eShaderStage::VERTEX,
-		"../shaders/phong.vert");
-	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT,
-		"../shaders/phong.frag");
-	if (m_phongShader.link() == false) {
-		printf("Shader Error: %s\n", m_phongShader.getLastError());
-		return false;
-	}
-
-	m_particleShader.loadShader(aie::eShaderStage::VERTEX,
-		"../shaders/particle.vert");
-	m_particleShader.loadShader(aie::eShaderStage::FRAGMENT,
-		"../shaders/particle.frag");
-	if (m_particleShader.link() == false) {
-		printf("Particle Error: %s\n", m_particleShader.getLastError());
-		return false;
-	}
-
-	m_light.diffuse = { 1, 1, 1 };
-	m_light.specular = { 0, 1, 0 };
-	m_ambientLight = { 0.25f, 0.25f, 0.25f };
-	m_light.direction = { 0, 0 , 1 };
-
-	m_light2.diffuse = { 1, 1, 1 };
-	m_light2.specular = { 0, 1, 0 };
-	m_light2.direction = { 0, 0 , -1 };
-
-	m_light3.diffuse = { 1, 1, 1 };
-	m_light3.specular = { 0, 1, 0 };
-	m_light3.direction = { 0, -1 , 0 };
-
-	m_light4.diffuse = { 1, 1, 1 };
-	m_light4.specular = { 0, 1, 0 };
-	m_light4.direction = { 0, -1 , 0 };
-
-	if (m_rockMesh.load("../Rock_6/Rock_6.obj", true, true) == false)
+	//-----------------------------------------------------------------
+	// Loads and error checks all shaders in scene
+	//-----------------------------------------------------------------
+	m_texturedShader.loadShader(aie::eShaderStage::VERTEX,	"../shaders/textured.vert"); // Loads Textured shader vert file
+	m_texturedShader.loadShader(aie::eShaderStage::FRAGMENT, "../shaders/textured.frag"); // Loads Textured shader frag file
+	if (m_texturedShader.link() == false) // Links shader to program, Checks if failed
 	{
-		printf("tree Mesh Error!\n");
+		printf("Shader Error: %s\n", m_shader.getLastError()); // If failed print error to console
+		return false; // End program
+	}
+
+	m_normalMapShader.loadShader(aie::eShaderStage::VERTEX, "../shaders/normalmap.vert"); // Load Normal shader vert file
+	m_normalMapShader.loadShader(aie::eShaderStage::FRAGMENT, "../shaders/normalmap.frag"); // Load Normal shader frag file
+	if (m_normalMapShader.link() == false) // Links shader to program, Checks if failed
+	{
+		printf("Shader Error: %s\n", m_shader.getLastError()); // If failed print error to console
+		return false; // End program
+	}
+
+	m_phongShader.loadShader(aie::eShaderStage::VERTEX, "../shaders/phong.vert"); // Load Phong shader vert file
+	m_phongShader.loadShader(aie::eShaderStage::FRAGMENT, "../shaders/phong.frag"); // Load Phong shader frag file
+	if (m_phongShader.link() == false) // Links shader to program, Checks if failed
+	{
+		printf("Shader Error: %s\n", m_phongShader.getLastError()); // If failed print error to console
+		return false; // End program
+	}
+
+	m_particleShader.loadShader(aie::eShaderStage::VERTEX, "../shaders/particle.vert"); // Load Particle shader vert file
+	m_particleShader.loadShader(aie::eShaderStage::FRAGMENT, "../shaders/particle.frag"); // Load Particle shader frag file
+	if (m_particleShader.link() == false) // Links shader to program, Checks if failed
+	{
+		printf("Shader Error: %s\n", m_particleShader.getLastError()); // If failed print error to console
+		return false; // End program
+	}
+
+	//-----------------------------------------------------------------
+	// Sets values for all lighting in the scene
+	//-----------------------------------------------------------------
+	m_light.diffuse = { 1, 1, 1 }; // Sets diffuse values for light
+	m_light.specular = { 0, 1, 0 }; // Sets specular values for light
+	m_light.direction = { 0, 0 , 1 }; // Sets lights direction
+
+	m_light2.diffuse = { 1, 1, 1 }; // Sets diffuse values for light
+	m_light2.specular = { 0, 1, 0 }; // Sets specular values for light
+	m_light2.direction = { 0, 0 , -1 }; // Sets lights direction
+
+	m_light3.diffuse = { 1, 1, 1 }; // Sets diffuse values for light
+	m_light3.specular = { 0, 1, 0 }; // Sets specular values for light
+	m_light3.direction = { 0, -1 , 0 }; // Sets lights direction
+
+	m_light4.diffuse = { 1, 1, 1 }; // Sets diffuse values for light
+	m_light4.specular = { 0, 1, 0 }; // Sets specular values for light
+	m_light4.direction = { 0, -1 , 0 }; // Sets lights direction
+
+	m_ambientLight = { 0.25f, 0.25f, 0.25f }; // Sets ambient light for the scene
+
+
+	//-----------------------------------------------------------------
+	// Loads models and sets there transforms
+	//-----------------------------------------------------------------
+	if (m_rockMesh.load("../Rock_6/Rock_6.obj", true, true) == false) // Loads rock obj file and rock textures
+	{
+		printf("Rock Mesh Error!\n");  // If failed to load print error to console
 		return false;
 	}
-	m_rockTransform = {
+
+	// Sets Rock Tranform with a new matrix4
+	m_rockTransform = 
+	{
 		1,0,0,0,
 		0,1,0,0,
 		0,0,1,0,
 		10,0,0,1
 	};
 
-	if (m_spearMesh2.load("../soulspear/soulspear.obj", true, true) == false)
+	if (m_spearMesh2.load("../soulspear/soulspear.obj", true, true) == false) // Loads in Soulspear obj and textures
 	{
-		printf("Soulspear Mesh Error!\n");
+		printf("Soulspear Mesh Error!\n"); // If failed to load print error to console
 		return false;
 	}
-	m_spearTransform2 = {
+
+	// Sets SoulSpear Tranform with a new matrix4
+	m_spearTransform2 = 
+	{
 		1,0,0,0,
 		0,1,0,0,
 		0,0,1,0,
 		0,0,0,1
 	};
 
-
-	if (m_spearMesh.load("../soulspear/soulspear.obj", true, true) == false) 
+	if (m_spearMesh.load("../soulspear/soulspear.obj", true, true) == false) // Loads in Soulspear obj and textures
 	{
-		printf("Soulspear Mesh Error!\n");
+		printf("Soulspear Mesh Error!\n"); // If failed to load print error to console
 		return false;
 	}
-	m_spearTransform = {
+
+	// Sets SoulSpear Tranform with a new matrix4
+	m_spearTransform = 
+	{
 		1,0,0,0,
 		0,1,0,0,
 		0,0,1,0,
 		0,0,4,1
 	};
 	
-	if (m_houseMesh.load("../old_house_obj/house_01.obj", true, true) == false)
+	if (m_rifleMesh.load("../Models/Rifle/Rifle.obj", true, true) == false) // Loads in Rifle obj and textures
 	{
-		printf("House Mesh Error!\n");
+		printf("Rifle Mesh Error!\n"); // If failed to load print error to console
 		return false;
 	}
 
-	m_houseTransform = {
-		0.1f,0,0,0,
-		0,0.1f,0,0,
-		0,0,0.1f,0,
+	// Sets Rifle Tranform with a new matrix4
+	m_rifleTransform = 
+	{
+		1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
 		0,0,-10,1
 	};
 
-
-	if (m_bunnyMesh.load("../stanford/Bunny.obj") == false)
+	if (m_dummyMesh.load("../dummy_obj/dummy_obj.obj") == false) // Loads in Dummy obj and textures
 	{
-		printf("Bunny Mesh Error!\n");
+		printf("Dummy Mesh Error!\n"); // If failed to load print error to console
 		return false;
 	}
-	m_bunnyTransform = {
-		0.1f,0,0,0,
-		0,0.1f,0,0,
-		0,0,0.1f,0,
-		0,0,-10,1
-	};
 
-	if (m_dummyMesh.load("../dummy_obj/dummy_obj.obj") == false)
+	// Sets Dummy Tranform with a new matrix4
+	m_dummyTransform = 
 	{
-		printf("Dummy Mesh Error!\n");
-		return false;
-	}
-	m_dummyTransform = {
 		0.1f,0,0,0,
 		0,0.1f,0,0,
 		0,0,0.1f,0,
 		-10,0,0,1
 	};
 
-	if (m_cameraMesh.load("../Models/Camera/leica.obj", true, true) == false)
+	if (m_cameraMesh.load("../Models/Camera/leica.obj", true, true) == false) // Loads in Camera obj and textures
 	{
-		printf("Camera Mesh Error!\n");
+		printf("Camera Mesh Error!\n"); // If failed to load print error to console
 		return false;
 	}
-	m_cameraTransform = {
+
+	// Sets Camera Tranform with a new matrix4
+	m_cameraTransform =
+	{
 		1,0,0,0,
 		0,1,0,0,
 		0,0,1,0,
 		10,15,0,1
 	};
 
-	if (m_renderTarget.initialise(1, a_resolution.x, a_resolution.y) == false)
-	{
-		printf("Render Target Error!\n");
-		return false;
-	}
-
-	m_quadMesh.initialiseQuad();
-
-	//Make the quad 10 units wide
-	m_quadTransform = 
-	{ 
-		10, 0, 0, 0,
-		0, 10, 0, 0,
-		0, 0, 10, 0,
-		0, 0, 0, 1 
-	}; 
-
-	m_emitter.initalise(1000, 500, 0.1f, 1.0f, 1, 5, 1, 0.1f, glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));
+	// Sets Particle Tranform with a new matrix4
 	m_particleTransform = 
 	{
-		10, 0, 0, 0,
-		0, 10, 0, 0,
-		0, 0, 10, 0,
-		0, 0, 0, 1 
+		1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		0,10,0,1 
 	};
 
-	aie::Texture texture2;
-	unsigned char texelData[4] = { 0, 255, 255, 0 };
-	texture2.create(2, 2, aie::Texture::RED, texelData);
+	// Inializes particle emitter with variables for particle amount, emit rate, life time, colour, size and position
+	m_emitter.initalise(1000, 500, 0.1f, 1.0f, 1, 5, 1, 0.1f, glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));
 
 	return true;
 }
@@ -241,131 +229,128 @@ void Application::Run()
 {
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
-		m_previousTime = m_currentTime;
-		m_currentTime = m_clock.now();
-		auto duration = m_currentTime - m_previousTime;
-		deltatime = duration.count() * NANO_TO_SECONDS;
+		m_previousTime = m_currentTime; // Updates previous time
+		m_currentTime = m_clock.now(); // Sets current time to now
+		auto duration = m_currentTime - m_previousTime; // Calculates duration
+		deltatime = duration.count() * NANO_TO_SECONDS; // Calculates deltaTime
 
-		cam->Update(deltatime, window);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		m_cam->Update(deltatime, window); // Update camera
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear openGl colour and depth buffer
 
-		// our game logic and update code goes here!
-		// so does our render code!
-		
-		// query time since application started
-		float time = glfwGetTime();
-		// rotate light
-		//m_light.direction = glm::normalize(glm::vec3(glm::cos(time * 2), 0,
-			//glm::sin(time * 2)));
-
-		aie::Gizmos::addTransform(glm::mat4(1));
+		aie::Gizmos::addTransform(glm::mat4(1)); 
 		glm::vec4 white(1);
 		glm::vec4 black(0, 0, 0, 1);
-		for (int i = 0; i < 21; ++i) {
+		for (int i = 0; i < 21; ++i) // Builds grid
+		{
 
 			aie::Gizmos::addLine(glm::vec3(-10 + i, 0, 10), glm::vec3(-10 + i, 0, -10), i == 10 ? white : black);
 			aie::Gizmos::addLine(glm::vec3(10, 0, -10 + i), glm::vec3(-10, 0, -10 + i), i == 10 ? white : black);
 		}
-		m_emitter.update(glfwGetTime(), cam->getWorldTransform());
-		Render();
+		m_emitter.update(deltatime, m_cam->getWorldTransform()); // Updates particle emitter
+		Render(); // Renders scene
 		glfwPollEvents();
 	}
 }
 
 void Application::Render()
 {
-	//aie::Gizmos::draw(cam->getProjectionView());
-	//aie::Gizmos::clear();
+	aie::Gizmos::draw(m_cam->getProjectionView()); // Draws gizmos with cameras view
+	aie::Gizmos::clear(); // Clears screen
 
 	// update perspective in case window resized
-	cam->setPerspective(0.25f, 16 / 9.f, 0.1f, 1000.f);
-	// bind shader
-	//shader.bind();
-	m_normalMapShader.bind();
+	m_cam->setPerspective(0.25f, 16 / 9.f, 0.1f, 1000.f);
 
-	//// bind transform
-	auto pvm = cam->getProjectionView() * m_houseTransform;
+	//-----------------------------------------------------------------
+	// Binds Shaders, Shader Uniforms, Sets camera view on the objects transform and draws objects
+	//-----------------------------------------------------------------
 
-	m_normalMapShader.bindUniform("ProjectionViewModel", pvm);
+	m_normalMapShader.bind(); // Bind the normal shader to the scene
+
+	// bind transform
+	auto pvm = m_cam->getProjectionView() * m_rifleTransform; // Sets project view model to cameras view * the objects transform
+	m_normalMapShader.bindUniform("ProjectionViewModel", pvm); // Binds projection view model to the shader
+
 	// bind transforms for lighting
-	m_normalMapShader.bindUniform("NormalMatrix",
-		glm::inverseTranspose(glm::mat3(m_houseTransform)));
-	m_normalMapShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(m_viewMatrix)[3]));
-	m_normalMapShader.bindUniform("Ia", m_ambientLight);
-	m_normalMapShader.bindUniform("Id", m_light.diffuse);
-	m_normalMapShader.bindUniform("Is", m_light.specular);
-	m_normalMapShader.bindUniform("lightDirection", m_light.direction);
+	m_normalMapShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_rifleTransform))); // Bind the normal matrix to the shader
+	m_normalMapShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(m_viewMatrix)[3])); // Binds the camera position to the shader
+	m_normalMapShader.bindUniform("Ia", m_ambientLight); // Binds the ambient light to the shader
+	m_normalMapShader.bindUniform("Id", m_light.diffuse); // Binds the lights diffuse value to the shader
+	m_normalMapShader.bindUniform("Is", m_light.specular); // Binds the lights Specular value to the shader
+	m_normalMapShader.bindUniform("lightDirection", m_light.direction); // Binds the lights direction to the shader
 
-	// draw house
-	m_houseMesh.draw();
+    // Draws Multi textured lit rifle
+	m_rifleMesh.draw();
 
-	pvm = cam->getProjectionView() * m_spearTransform;
+	pvm = m_cam->getProjectionView() * m_spearTransform; // Sets project view model to cameras view * the objects transform
+	m_normalMapShader.bindUniform("ProjectionViewModel", pvm); // Binds projection view model to the shader
 
-	m_normalMapShader.bindUniform("ProjectionViewModel", pvm);
 	// bind transforms for lighting
-	m_normalMapShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_spearTransform)));
-	m_normalMapShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(m_viewMatrix)[3]));
-	m_normalMapShader.bindUniform("Ia", m_ambientLight);
-	m_normalMapShader.bindUniform("Id", m_light2.diffuse);
-	m_normalMapShader.bindUniform("Is", m_light2.specular);
-	m_normalMapShader.bindUniform("lightDirection", m_light2.direction);
+	m_normalMapShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_spearTransform))); // Bind the normal matrix to the shader
+	m_normalMapShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(m_viewMatrix)[3])); // Binds the camera position to the shader
+	m_normalMapShader.bindUniform("Ia", m_ambientLight); // Binds the ambient light to the shader
+	m_normalMapShader.bindUniform("Id", m_light2.diffuse); // Binds the lights diffuse value to the shader
+	m_normalMapShader.bindUniform("Is", m_light2.specular); // Binds the lights Specular value to the shader
+	m_normalMapShader.bindUniform("lightDirection", m_light2.direction); // Binds the lights direction to the shader
 
-	// draw spear
+	// Draws Multi textured lit spear
 	m_spearMesh.draw();
 
-	pvm = cam->getProjectionView() * m_rockTransform;
-	m_normalMapShader.bindUniform("ProjectionViewModel", pvm);
+	pvm = m_cam->getProjectionView() * m_rockTransform; // Sets project view model to cameras view * the objects transform
+	m_normalMapShader.bindUniform("ProjectionViewModel", pvm); // Binds projection view model to the shader
 
 	// bind transforms for lighting
-	m_normalMapShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_rockTransform)));
-	m_normalMapShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(m_viewMatrix)[3]));
-	m_normalMapShader.bindUniform("Ia", m_ambientLight);
-	m_normalMapShader.bindUniform("Id", m_light3.diffuse);
-	m_normalMapShader.bindUniform("Is", m_light3.specular);
-	m_normalMapShader.bindUniform("lightDirection", m_light3.direction);
+	m_normalMapShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_rockTransform))); // Bind the normal matrix to the shader
+	m_normalMapShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(m_viewMatrix)[3])); // Binds the camera position to the shader
+	m_normalMapShader.bindUniform("Ia", m_ambientLight); // Binds the ambient light to the shader
+	m_normalMapShader.bindUniform("Id", m_light3.diffuse); // Binds the lights diffuse value to the shader
+	m_normalMapShader.bindUniform("Is", m_light3.specular); // Binds the lights Specular value to the shader
+	m_normalMapShader.bindUniform("lightDirection", m_light3.direction); // Binds the lights direction to the shader
 
-	// draw spear
+	// Draws Multi textured lit spear
 	m_rockMesh.draw();
 
-	pvm = cam->getProjectionView() * m_cameraTransform;
-	m_normalMapShader.bindUniform("ProjectionViewModel", pvm);
+	pvm = m_cam->getProjectionView() * m_cameraTransform; // Sets project view model to cameras view * the objects transform
+	m_normalMapShader.bindUniform("ProjectionViewModel", pvm); // Binds projection view model to the shader
 
 	// bind transforms for lighting
-	m_normalMapShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_cameraTransform)));
-	m_normalMapShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(m_viewMatrix)[3]));
-	m_normalMapShader.bindUniform("Ia", m_ambientLight);
-	m_normalMapShader.bindUniform("Id", m_light4.diffuse);
-	m_normalMapShader.bindUniform("Is", m_light4.specular);
-	m_normalMapShader.bindUniform("lightDirection", m_light4.direction);
+	m_normalMapShader.bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_cameraTransform))); // Bind the normal matrix to the shader
+	m_normalMapShader.bindUniform("cameraPosition", glm::vec3(glm::inverse(m_viewMatrix)[3])); // Binds the camera position to the shader
+	m_normalMapShader.bindUniform("Ia", m_ambientLight); // Binds the ambient light to the shader
+	m_normalMapShader.bindUniform("Id", m_light4.diffuse); // Binds the lights diffuse value to the shader
+	m_normalMapShader.bindUniform("Is", m_light4.specular); // Binds the lights Specular value to the shader
+	m_normalMapShader.bindUniform("lightDirection", m_light4.direction); // Binds the lights direction to the shader
 
-	// draw spear
+	// Draws Multi textured lit camera
 	m_cameraMesh.draw();
 
-	pvm = cam->getProjectionView() * m_dummyTransform;
-	m_normalMapShader.bindUniform("ProjectionViewModel", pvm);
+	pvm = m_cam->getProjectionView() * m_dummyTransform; // Sets project view model to cameras view * the objects transform
+	m_normalMapShader.bindUniform("ProjectionViewModel", pvm); // Binds projection view model to the shader
 
+	// Binds Textured shader
 	m_texturedShader.bind();
 
-	pvm = cam->getProjectionView() * m_dummyTransform;
-	m_texturedShader.bindUniform("ProjectionViewModel", pvm);
+	pvm = m_cam->getProjectionView() * m_dummyTransform; // Sets project view model to cameras view * the objects transform
+	m_texturedShader.bindUniform("ProjectionViewModel", pvm); // Binds projection view model to the shader
 
 	// draw Dummy
 	m_dummyMesh.draw();
 
-	pvm = cam->getProjectionView() * m_spearTransform2;
-	m_texturedShader.bindUniform("ProjectionViewModel", pvm);
+	pvm = m_cam->getProjectionView() * m_spearTransform2; // Sets project view model to cameras view * the objects transform
+	m_texturedShader.bindUniform("ProjectionViewModel", pvm); // Binds projection view model to the shader
 	
+	// Draws Textured spear
 	m_spearMesh2.draw();
 
 	// bind particle shader
 	m_particleShader.bind();
+
 	// bind particle transform
-	pvm = cam->getProjectionView() * m_particleTransform;
-	m_particleShader.bindUniform("ProjectionViewModel", pvm);
-	m_emitter.draw();
+	pvm = m_cam->getProjectionView() * m_particleTransform; // Sets project view model to cameras view * the objects transform
+	m_particleShader.bindUniform("ProjectionViewModel", pvm); // Binds projection view model to the shader
+	m_emitter.draw(); // draws particles into scene
 
 	// draw 3D gizmos
-	aie::Gizmos::draw(cam->getProjectionView());
+	aie::Gizmos::draw(m_cam->getProjectionView()); 
 
 	glfwSwapBuffers(window);
 	// draw 2D gizmos using an orthogonal projection matrix
@@ -377,7 +362,7 @@ void Application::Terminate()
 	//Delete Gizmos
 	aie::Gizmos::destroy();
 
-	delete cam;
+	delete m_cam;
 
 	//Clean up window and GPU linkage
 	glfwTerminate();

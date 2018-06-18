@@ -135,7 +135,6 @@
     <ClCompile Include="OBJMesh.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
     <ClCompile Include="Planet.cpp" />
-    <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
@@ -149,7 +148,6 @@
     <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="Planet.h" />
-    <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />

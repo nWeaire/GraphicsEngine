@@ -11,7 +11,6 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "OBJMesh.h"
-#include "RenderTarget.h"
 #include "ParticleEmitter.h"
 namespace wsp
 {
@@ -30,8 +29,14 @@ static const ullong NANO_IN_SECONDS = 1000000000ULL;
 class Application
 {
 public:
-
+	//-----------------------------------------------------
+	// Default contructor
+	//-----------------------------------------------------
 	Application();
+
+	//-----------------------------------------------------
+	// Default destructor
+	//-----------------------------------------------------
 	~Application();
 
 	int Initialize(const glm::ivec2& a_resolution = glm::ivec2(1440, 900), const char* a_name = "Window");
@@ -40,7 +45,7 @@ public:
 	void Terminate();
 
 protected:
-	float deltatime;
+	float deltatime; // Float to hold the value of deltaTime
 
 	GLFWwindow* window;
 	GLFWmonitor** screens;
@@ -53,7 +58,7 @@ protected:
 	wsp::time m_currentTime;
 	wsp::time m_previousTime;
 
-	Camera* cam;
+	Camera* m_cam;
 	
 	glm::mat4			m_viewMatrix;
 	glm::mat4			m_projectionMatrix;
@@ -62,7 +67,6 @@ protected:
 	aie::ShaderProgram  m_normalMapShader;
 	aie::ShaderProgram	m_texturedShader;
 	aie::ShaderProgram	m_phongShader;
-	aie::ShaderProgram  m_postShader;
 	aie::ShaderProgram	m_particleShader;
 
 	Mesh				m_quadMesh;
@@ -76,8 +80,8 @@ protected:
 	aie::OBJMesh		m_spearMesh;
 	glm::mat4			m_spearTransform;
 
-	aie::OBJMesh		m_houseMesh;
-	glm::mat4			m_houseTransform;
+	aie::OBJMesh		m_rifleMesh;
+	glm::mat4			m_rifleTransform;
 
 	aie::OBJMesh		m_rockMesh;
 	glm::mat4			m_rockTransform;
@@ -93,12 +97,11 @@ protected:
 
 	aie::Texture		m_gridTexture;
 
-	aie::RenderTarget		m_renderTarget;
-
 	ParticleEmitter		m_emitter;
 	glm::mat4			m_particleTransform;
 
-	struct Light {
+	struct Light 
+	{
 		glm::vec3 direction;
 		glm::vec3 diffuse;
 		glm::vec3 specular;
