@@ -1,12 +1,17 @@
 #include "ParticleEmitter.h"
 
 
-
+//-----------------------------------------------------
+// Default Constructor
+//-----------------------------------------------------
 ParticleEmitter::ParticleEmitter() : m_particles(nullptr), m_firstDead(0), m_maxParticles(0), m_position(0, 0, 0), m_vao(0), m_vbo(0), m_ibo(0), m_vertexData(nullptr) 
 {
 
 }
 
+//-----------------------------------------------------
+// Default Destructor
+//-----------------------------------------------------
 ParticleEmitter::~ParticleEmitter()
 {
 	delete[] m_particles;
@@ -16,6 +21,20 @@ ParticleEmitter::~ParticleEmitter()
 	glDeleteBuffers(1, &m_ibo);
 }
 
+//-----------------------------------------------------
+// Initalises particles with given parameters
+// parameters:
+//		int a_maxParticles:	Max particles that can spawn
+//		int a_emitRate: Rate the particles spawn
+//		float a_lifeTimeMin: Minimum time a particle lasts
+//		float a_lifetimeMax: Maximum time a particle can last
+//		float a_velocityMin: Minimum velocity a particle can move
+//		float a_velocityMax: Maximum valocity a particle can move
+//		float a_startSize: Starting size of particle
+//		float a_endSize: End size of particle
+//		Vector4 a_startColour: Starting colour of particle
+//		Vector4 a_endColour: End colour of particle
+//-----------------------------------------------------
 void ParticleEmitter::initalise(unsigned int a_maxParticles, unsigned int a_emitRate, float a_lifetimeMin, float a_lifetimeMax, float a_velocityMin, float a_velocityMax, float a_startSize, float a_endSize, const glm::vec4& a_startColour, const glm::vec4& a_endColour) 
 {
 	// set up emit timers
@@ -76,6 +95,9 @@ void ParticleEmitter::initalise(unsigned int a_maxParticles, unsigned int a_emit
 	delete[] indexData;
 }
 
+//-----------------------------------------------------
+// Emits particles in scene
+//-----------------------------------------------------
 void ParticleEmitter::emit() 
 {
 	// only emit if there is a dead particle to use
@@ -168,6 +190,9 @@ void ParticleEmitter::update(float a_deltaTime, const glm::mat4& a_cameraTransfo
 	}
 }
 
+//-----------------------------------------------------
+// Draw function called every frame
+//-----------------------------------------------------
 void ParticleEmitter::draw()
 {
 	// sync the particle vertex buffer

@@ -1,3 +1,9 @@
 ﻿  Application.cpp
-c:\users\s171762\desktop\graphicsengine\graphicsengine\graphicsengine\application.cpp(235): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  GraphicsEngine.vcxproj -> C:\Users\s171762\Desktop\GraphicsEngine\GraphicsEngine\x64\Debug\GraphicsEngine.exe
+c:\users\nick\desktop\graphics\graphicsengine\graphicsengine\application.cpp(235): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  Camera.cpp
+  FlyCamera.cpp
+  Main.cpp
+  Mesh.cpp
+  ParticleEmitter.cpp
+  Generating Code...
+  GraphicsEngine.vcxproj -> C:\Users\Nick\Desktop\Graphics\GraphicsEngine\x64\Debug\GraphicsEngine.exe

@@ -39,78 +39,98 @@ public:
 	//-----------------------------------------------------
 	~Application();
 
+	//-----------------------------------------------------
+	// Function called on startup,
+	// Initializes resolution and window size
+	// Loads shaders and objects, setups up camera and transforms
+	// Parameters:
+	//		a_resolution: Resolution for the window created
+	//		a_name: Name of the window
+	//-----------------------------------------------------
 	int Initialize(const glm::ivec2& a_resolution = glm::ivec2(1440, 900), const char* a_name = "Window");
+
+	//-----------------------------------------------------
+	// Update function called every frame
+	//-----------------------------------------------------
 	void Run();
+
+	//-----------------------------------------------------
+	// Draw function called every frame
+	//-----------------------------------------------------
 	void Render();
+
+	//-----------------------------------------------------
+	// Function called when program is closed
+	//-----------------------------------------------------
 	void Terminate();
 
 protected:
 	float deltatime; // Float to hold the value of deltaTime
 
-	GLFWwindow* window;
-	GLFWmonitor** screens;
+	GLFWwindow* window; // OpenGL window
+	GLFWmonitor** screens; // Number of screens for OpenGL
 
-	glm::mat4 view;
-	glm::mat4 projection;
+	glm::mat4 view; // Matrix4 containing the view transform
+	glm::mat4 projection; // Matrix4 containing the projection transform
 
-	wsp::clock m_clock;
-	wsp::time m_startTime;
-	wsp::time m_currentTime;
-	wsp::time m_previousTime;
+	wsp::clock m_clock; // Contains data based on time
+	wsp::time m_startTime; // Time when program starts
+	wsp::time m_currentTime; // Current time of program
+	wsp::time m_previousTime; // Previous current time of program
 
-	Camera* m_cam;
+	Camera* m_cam; // Reference to camera class
 	
-	glm::mat4			m_viewMatrix;
-	glm::mat4			m_projectionMatrix;
+	glm::mat4			m_viewMatrix; // Matrix4 containing the view transform 
+	glm::mat4			m_projectionMatrix; // Matrix4 containing the projection transform
 
-	aie::ShaderProgram	m_shader;
-	aie::ShaderProgram  m_normalMapShader;
-	aie::ShaderProgram	m_texturedShader;
-	aie::ShaderProgram	m_phongShader;
-	aie::ShaderProgram	m_particleShader;
+	aie::ShaderProgram	m_shader; // Simple shader reference
+	aie::ShaderProgram  m_normalMapShader; // Normal shader reference
+	aie::ShaderProgram	m_texturedShader; // Textured shader reference
+	aie::ShaderProgram	m_phongShader; // Phong shader reference
+	aie::ShaderProgram	m_particleShader; // Particle shader reference
 
-	Mesh				m_quadMesh;
-	glm::mat4			m_quadTransform;
+	Mesh				m_quadMesh; // Reference to mesh
+	glm::mat4			m_quadTransform; // Tranformation matrix of quad
 
-	Mesh				m_fullscreenQuad;
+	Mesh				m_fullscreenQuad; // Fullscreen quad for post effects
 
-	aie::OBJMesh		m_bunnyMesh;
-	glm::mat4			m_bunnyTransform;
+	aie::OBJMesh		m_bunnyMesh; // Reference to bunny object
+	glm::mat4			m_bunnyTransform; // Transformation matrix for bunny
 
-	aie::OBJMesh		m_spearMesh;
-	glm::mat4			m_spearTransform;
+	aie::OBJMesh		m_spearMesh; // Reference to spear object
+	glm::mat4			m_spearTransform; // Transformation matrix for spear
 
-	aie::OBJMesh		m_rifleMesh;
-	glm::mat4			m_rifleTransform;
+	aie::OBJMesh		m_rifleMesh; // Reference to rifle object
+	glm::mat4			m_rifleTransform; // Transformation matrix for rifle
 
-	aie::OBJMesh		m_rockMesh;
-	glm::mat4			m_rockTransform;
+	aie::OBJMesh		m_rockMesh; // Reference to rock object
+	glm::mat4			m_rockTransform; // Transformation for rock
 
-	aie::OBJMesh		m_spearMesh2;
-	glm::mat4			m_spearTransform2;
+	aie::OBJMesh		m_spearMesh2; // Reference to spear object
+	glm::mat4			m_spearTransform2; // Transformation matrix for spear2
 
-	aie::OBJMesh		m_dummyMesh;
-	glm::mat4			m_dummyTransform;
+	aie::OBJMesh		m_dummyMesh; // Reference to dummy object
+	glm::mat4			m_dummyTransform; // Transformation matrix for dummy
 
-	aie::OBJMesh		m_cameraMesh;
-	glm::mat4			m_cameraTransform;
+	aie::OBJMesh		m_cameraMesh; // Reference to camera object
+	glm::mat4			m_cameraTransform; // Transformation matrix for camera
 
-	aie::Texture		m_gridTexture;
+	aie::Texture		m_gridTexture; // Grid texture
 
-	ParticleEmitter		m_emitter;
-	glm::mat4			m_particleTransform;
+	ParticleEmitter		m_emitter; // Reference to particle emitter
+	glm::mat4			m_particleTransform; // Tranformation matrix for particle
 
-	struct Light 
+	struct Light // Light struct containing direction, diffuse and specular
 	{
-		glm::vec3 direction;
-		glm::vec3 diffuse;
-		glm::vec3 specular;
+		glm::vec3 direction; // Direction the light faces
+		glm::vec3 diffuse; // Diffuse for light
+		glm::vec3 specular; // Specular for light
 	};
-	Light m_light;
-	Light m_light2;
-	Light m_light3;
-	Light m_light4;
-	glm::vec3 m_ambientLight;
+	Light m_light; // Reference to light1
+	Light m_light2; // Reference to light2
+	Light m_light3; // Reference to light3
+	Light m_light4; // Reference to light4
+	glm::vec3 m_ambientLight; // Vector3 containing RBG of ambient light
 
 };
 

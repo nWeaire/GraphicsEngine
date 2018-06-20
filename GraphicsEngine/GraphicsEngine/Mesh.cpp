@@ -1,5 +1,8 @@
 #include "Mesh.h"
 
+//-----------------------------------------------------
+// Default Destructor
+//-----------------------------------------------------
 Mesh::~Mesh()
 {
 	glDeleteVertexArrays(1, &vao);
@@ -7,6 +10,14 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &ibo);
 }
 
+//-----------------------------------------------------
+// Initialises mesh with a vertex count, vertices, Index count and indices
+// Parameter:
+//		int vertexCount: Number of vertices in the mesh
+//		Vertex* vertices: type of vertices in the mesh
+//		int indexCount: Number of indices in the mesh
+//		Vertex* indices: type of indices in the mesh
+//-----------------------------------------------------
 void Mesh::initialise(unsigned int vertexCount, const Vertex * vertices, unsigned int indexCount, unsigned int * indices)
 {
 	assert(vao == 0);
@@ -52,6 +63,9 @@ void Mesh::initialise(unsigned int vertexCount, const Vertex * vertices, unsigne
 
 }
 
+//-----------------------------------------------------
+// Initialises a quad shaped mesh
+//-----------------------------------------------------
 void Mesh::initialiseQuad() {
 	// check that the mesh is not initialized already
 	assert(vao == 0);
@@ -103,6 +117,9 @@ void Mesh::initialiseQuad() {
 	triCount = 2;
 }
 
+//-----------------------------------------------------
+// Initialises a fullscreen quad mesh
+//-----------------------------------------------------
 void Mesh::initialiseFullscreenQuad()
 {
 	assert(vao == 0);
@@ -143,6 +160,9 @@ void Mesh::initialiseFullscreenQuad()
 	triCount = 2;
 }
 
+//-----------------------------------------------------
+// Draw function to be called every frame
+//-----------------------------------------------------
 void Mesh::draw() {
 
 	glBindVertexArray(vao);

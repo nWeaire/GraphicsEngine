@@ -13,13 +13,18 @@
 
 int main()
 {
+	// Makes instance of application
 	Application App;
-
+	
+	// Calls startup function for the application
 	App.Initialize();
 
+	// Calls the update function of the application
 	App.Run();
 	
+	// Calls the terminate function for the application
 	App.Terminate();
 
+	// Returns 0 if all pasted
 	return 0;
 }
