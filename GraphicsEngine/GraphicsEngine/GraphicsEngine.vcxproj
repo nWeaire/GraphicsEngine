@@ -146,7 +146,6 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="ParticleEmitter.h" />
-    <ClInclude Include="Planet.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />

@@ -86,9 +86,9 @@ protected:
 	//-----------------------------------------------------
 	void updateProjectionViewTransform();
 
-	glm::mat4 worldTransform;
-	glm::mat4 viewTransform;
-	glm::mat4 projectionTransform;
-	glm::mat4 view_x_projection;
+	glm::mat4 worldTransform; // World position of the camera
+	glm::mat4 viewTransform; // View transform of the camera
+	glm::mat4 projectionTransform; // Projection transform of the camera
+	glm::mat4 view_x_projection; // Projection view transform of the camera
 };
 

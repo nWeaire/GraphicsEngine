@@ -1,14 +1,27 @@
 #include "Application.h"
 
+//-----------------------------------------------------
+// Default contructor
+//-----------------------------------------------------
 Application::Application()
 {
 }
 
-
+//-----------------------------------------------------
+// Default destructor
+//-----------------------------------------------------
 Application::~Application()
 {
 }
 
+//-----------------------------------------------------
+// Function called on startup,
+// Initializes resolution and window size
+// Loads shaders and objects, setups up camera and transforms
+// Parameters:
+//		a_resolution: Resolution for the window created
+//		a_name: Name of the window
+//-----------------------------------------------------
 int Application::Initialize(const glm::ivec2 & a_resolution, const char * a_name)
 {
 	m_cam = new FlyCamera();
@@ -225,6 +238,13 @@ int Application::Initialize(const glm::ivec2 & a_resolution, const char * a_name
 	return true;
 }
 
+//-----------------------------------------------------
+// Update function called every frame
+// Builds grid with x,y and z axis
+// Updates camera
+// Updates deltaTime
+// Updates emitter
+//-----------------------------------------------------
 void Application::Run()
 {
 	while (glfwWindowShouldClose(window) == false && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
@@ -252,6 +272,11 @@ void Application::Run()
 	}
 }
 
+//-----------------------------------------------------
+// Draw function called every frame
+// Renders all objects in scene
+// Binds shaders to the scene
+//-----------------------------------------------------
 void Application::Render()
 {
 	aie::Gizmos::draw(m_cam->getProjectionView()); // Draws gizmos with cameras view
@@ -357,11 +382,15 @@ void Application::Render()
 	aie::Gizmos::draw2D(1440, 900);
 }
 
+//-----------------------------------------------------
+// Function called when program is closed
+//-----------------------------------------------------
 void Application::Terminate()
 {
 	//Delete Gizmos
 	aie::Gizmos::destroy();
 
+	// Deletes camera
 	delete m_cam;
 
 	//Clean up window and GPU linkage
